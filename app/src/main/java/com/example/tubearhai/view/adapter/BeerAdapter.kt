@@ -1,6 +1,7 @@
 package com.example.tubearhai.view.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -9,8 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tubearhai.databinding.ItemBeerBinding
 import com.example.tubearhai.model.BeerData
+import com.example.tubearhai.utils.BottomSheetDialog
 
-class BeerAdapter(private val context:Context):RecyclerView.Adapter<BeerAdapter.BeerViewHolder>() {
+class BeerAdapter(private val context: Context, private val bottomSheet: (String, String, List<String>) -> Unit):RecyclerView.Adapter<BeerAdapter.BeerViewHolder>() {
 
     inner class BeerViewHolder(val binding: ItemBeerBinding): RecyclerView.ViewHolder(binding.root)
 
@@ -36,12 +38,18 @@ class BeerAdapter(private val context:Context):RecyclerView.Adapter<BeerAdapter.
         holder.binding.apply {
             val beer = beers[position]
             Glide.with(context)
-                .load(beer.imageUrl)
+                .load(beer.image_url)
                 .into(ivBeerImage)
 
             beerName.text=beer.name
-            beerTagline.text=beer.tagline
-
+            beerTagline.text="'${beer.tagline}'"
+            ibShare.setOnClickListener {
+                shareBeer(beer.image_url)
+            }
+            root.setOnLongClickListener {
+                bottomSheet(beer.first_brewed,beer.description,beer.food_pairing)
+                true
+            }
 
         }
     }
@@ -50,5 +58,19 @@ class BeerAdapter(private val context:Context):RecyclerView.Adapter<BeerAdapter.
        return beers.size
     }
 
+    private fun shareBeer(beerImage:String){
+
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "text/plain"
+
+        // Set the URL of the image as the content to be shared
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT,"Checkout This Cool Beer")
+
+        shareIntent.putExtra(Intent.EXTRA_TEXT, beerImage)
+
+        // Start the activity for sharing
+        context.startActivity(Intent.createChooser(shareIntent, "Share Image URL"))
+
+    }
 
 }

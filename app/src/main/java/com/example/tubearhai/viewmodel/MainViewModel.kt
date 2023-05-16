@@ -10,13 +10,22 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(private val repository: Repository):ViewModel() {
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getBeers(1)
-        }
+var page =0
+
+    fun getNextPage(){
+        page++
+        getBeers(page)
     }
+
+
+  private fun getBeers(page:Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getBeers(page)
+        }
+  }
 
     val beerLiveData:LiveData<List<BeerData>>
         get() = repository.beerLivedata
 
-}
+
+ }

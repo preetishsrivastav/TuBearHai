@@ -8,4 +8,10 @@
     <style name="Theme.TuBearHai" parent="Base.Theme.TuBearHai" />
 
 
+    <style name="Base.Theme.TuBearHai.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
 </resources>

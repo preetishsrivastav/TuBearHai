@@ -2,22 +2,18 @@ package com.example.tubearhai.view.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.core.view.isVisible
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
-import com.example.tubearhai.R
+import androidx.recyclerview.widget.RecyclerView
 import com.example.tubearhai.databinding.ActivityMainBinding
 import com.example.tubearhai.repository.Repository
+import com.example.tubearhai.utils.BottomSheetDialog
 import com.example.tubearhai.view.adapter.BeerAdapter
 import com.example.tubearhai.view.network.RetrofitInstance
 import com.example.tubearhai.viewmodel.MainViewModel
 import com.example.tubearhai.viewmodel.ViewModelFactory
-import retrofit2.HttpException
-import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
     companion object{
@@ -27,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var beerAdapter: BeerAdapter
     private lateinit var mainViewModel: MainViewModel
-
+    private lateinit var lm:LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,36 +35,38 @@ class MainActivity : AppCompatActivity() {
         val repository=Repository(beerApi)
 
         mainViewModel=ViewModelProvider(this,ViewModelFactory(repository)).get(MainViewModel::class.java)
+        mainViewModel.getNextPage()
 
         mainViewModel.beerLiveData.observe(this, Observer {
             beerAdapter.beers = it
         })
 
-//        lifecycleScope.launchWhenCreated {
-//            binding.pbMain.isVisible = true
-//            val response = try {
-//                RetrofitInstance.api.getBeers(1)
-//            } catch(e: IOException) {
-//                Log.e(TAG, "IOException, you might not have internet connection")
-//                binding.pbMain.isVisible = false
-//                return@launchWhenCreated
-//            } catch (e: HttpException) {
-//                Log.e(TAG, "HttpException, unexpected response")
-//                binding.pbMain.isVisible = false
-//                return@launchWhenCreated
-//            }
-//            if(response.isSuccessful && response.body() != null) {
-//                beerAdapter.beers = response.body()!!
-//            } else {
-//                Log.e(TAG, "Response not successful")
-//            }
-//            binding.pbMain.isVisible = false
-//        }
+
+    }
+    private fun showBottomSheetDialog(firstBrewed:String, description:String, foodPairing:List<String>){
+        val bottomSheet= BottomSheetDialog(firstBrewed, description, foodPairing)
+        bottomSheet.show(supportFragmentManager,"BottomSheetFragment")
     }
 
     private fun setupRecyclerView() = binding.rvMain.apply {
-        beerAdapter = BeerAdapter(this@MainActivity)
+        beerAdapter = BeerAdapter(this@MainActivity,::showBottomSheetDialog)
         adapter = beerAdapter
-        layoutManager = LinearLayoutManager(this@MainActivity,LinearLayoutManager.VERTICAL,false)
+        lm=LinearLayoutManager(this@MainActivity,LinearLayoutManager.VERTICAL,false)
+        layoutManager = lm
+        addOnScrollListener(object :RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy>0){
+                    val childCount = beerAdapter.itemCount
+                    val lastPosition=lm.findLastCompletelyVisibleItemPosition()
+                   if (childCount-1 == lastPosition){
+                       mainViewModel.getNextPage()
+                   }
+
+                }
+            }
+
+
+        })
+
     }
 }

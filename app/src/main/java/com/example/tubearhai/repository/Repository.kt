@@ -19,7 +19,6 @@ class Repository(private val beerApi: BeerApi) {
 
         if (result.body() != null){
                 beerMutableLiveData.postValue(result.body())
-
         }
 
     }

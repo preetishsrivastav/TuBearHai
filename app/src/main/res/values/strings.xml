@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Tu Bear Hai</string>
     <string name="image_contentDescription">image</string>
+    <string name="first_brewed"> <u> First Brewed : </u> </string>
+    <string name="description"> <u> Description :</u>  </string>
+    <string name="food_pairing"> <u> Food Pairing :</u>  </string>
+    <string name="splash_screen_title">Tu Bear Hai</string>
 </resources>
