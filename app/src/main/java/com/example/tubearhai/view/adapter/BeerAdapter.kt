@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.tubearhai.databinding.ItemBeerBinding
 import com.example.tubearhai.model.BeerData
 
-class BeerAdapter(val context:Context):RecyclerView.Adapter<BeerAdapter.BeerViewHolder>() {
+class BeerAdapter(private val context:Context):RecyclerView.Adapter<BeerAdapter.BeerViewHolder>() {
 
     inner class BeerViewHolder(val binding: ItemBeerBinding): RecyclerView.ViewHolder(binding.root)
 
@@ -35,11 +35,13 @@ class BeerAdapter(val context:Context):RecyclerView.Adapter<BeerAdapter.BeerView
     override fun onBindViewHolder(holder: BeerAdapter.BeerViewHolder, position: Int) {
         holder.binding.apply {
             val beer = beers[position]
-                Glide.with(context)
-               .load(beer.imageUrl)
-               .into(ivDishImage)
+            Glide.with(context)
+                .load(beer.imageUrl)
+                .into(ivBeerImage)
+
             beerName.text=beer.name
             beerTagline.text=beer.tagline
+
 
         }
     }

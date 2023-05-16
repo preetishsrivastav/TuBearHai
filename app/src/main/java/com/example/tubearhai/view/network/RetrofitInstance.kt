@@ -6,7 +6,7 @@ import retrofit2.create
 
 object RetrofitInstance {
 
-    const val BASE_URL:String = "https://api.punkapi.com/"
+    private const val BASE_URL:String = "https://api.punkapi.com/"
 
  val api:BeerApi by lazy {
          Retrofit.Builder()
