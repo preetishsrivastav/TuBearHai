@@ -1,4 +1,6 @@
 # TuBearHai
+Languages Used : Kotlin, XML, Groovy
+Library Used : Glide, Retrofit, Coroutines, Paging 
 
 It is Cool Application which provides you with the latest beer in the market . The range varies from Scottish Brewery,  Sam Adams Utopias to Blue Moon and Budwiser
 
